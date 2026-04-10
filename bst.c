@@ -4,7 +4,7 @@
 struct node{
     int data;
     struct node *prev,*link;
-}*root=NULL,*nn,*t;
+}*root=NULL,*nn,*t=NULL;
 
 void create();
 void inorder();
@@ -45,23 +45,29 @@ int main(){
                 break;
             case 6:
                  printf("Postorder using reccursion:");
+                 t=root;
                  postorderRec(t);
                  break;
             case 7:
                 printf("inorder using reccursion:");
+                t=root;
                 inorderRec(t);
                 break;
             case 8:
                 printf("preorder using reccursion:");
+                t=root;
                 preorderRec(t);
                 break;
             case 9:
+            	t=root;
                 printf("height of the tree:%d\n",height(t));
                 break;
             case 10:
+            	t=root;
                 printf("non-leaf nodes:%d\n",countnl(t));
                 break;
             case 11:
+            	t=root;
                 printf("leaf nodes:%d\n",countl(t));
                 break;
 
@@ -168,7 +174,6 @@ void postorder(){
 }//end of func
 //function to display inorder reccursion
 void inorderRec(struct node *t){
-    t=root;
     if(t!=NULL){
         inorderRec(t->prev);
         printf("%d ",t->data);
@@ -177,7 +182,6 @@ void inorderRec(struct node *t){
 }
 
 void preorderRec(struct node *t){
-    t=root;
     if(t!=NULL){
         printf("%d ",t->data);
         preorderRec(t->prev);
@@ -186,7 +190,6 @@ void preorderRec(struct node *t){
 }
 //function to display postorder using reccursion
 void postorderRec(struct node *t){
-    t=root;
     if(t!=NULL){
         postorderRec(t->prev);
         postorderRec(t->link);
@@ -196,7 +199,6 @@ void postorderRec(struct node *t){
 //function to know the height of the tree
 int height(struct node *t){
     int lh,rh;
-    t=root;
     if(t==NULL)
         return 0;
     lh=height(t->prev);
@@ -208,14 +210,12 @@ int height(struct node *t){
 }
 //function to count the non leaf nodes
 int countnl(struct node *t){
-    t=root;
     if(t==NULL || (t->prev==NULL && t->link==NULL))
         return 0;
     return 1 + countnl(t->prev) + countnl(t->link);
 }
 //function to count the leaf node
 int countl(struct node *t){
-    t=root;
     if(t==NULL)
         return 0;
     if(t->prev==NULL && t->link==NULL)
@@ -224,7 +224,6 @@ int countl(struct node *t){
 }
 //function to display the nodes
 void display1(struct node *t){
-    t=root;
     if(t==NULL)
         return;
     printf("Node:%d ",t->data);
