@@ -1,106 +1,152 @@
 #include <stdio.h>
+#include <stdlib.h>
+
 #define SIZE 10
+#define EMPTY -1
+#define DELETED -2
 
 int hashTable[SIZE];
 
-void init() {
-    for(int i = 0; i < SIZE; i++)
-        hashTable[i] = -1;
+void initialize() {
+    for(int i = 0; i < SIZE; i++) {
+        hashTable[i] = EMPTY;
+    }
 }
 
 int hashFunction(int key) {
     return key % SIZE;
 }
 
-void insert(int key) {
-    int index = hashFunction(key);
-    int i = 0;
+void insert() {
+    int n, key, index, newIndex;
 
-    while(i < SIZE) {
-        int newIndex = (index + i * i) % SIZE;
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
 
-        if(hashTable[newIndex] == -1) {
-            hashTable[newIndex] = key;
-            printf("Inserted %d at index %d\n", key, newIndex);
-            return;
+    for(int j = 0; j < n; j++) {
+        printf("Enter value %d: ", j + 1);
+        scanf("%d", &key);
+
+        index = hashFunction(key);
+
+        for(int i = 0; i < SIZE; i++) {
+            newIndex = (index + i * i) % SIZE;
+
+            if(hashTable[newIndex] == EMPTY || hashTable[newIndex] == DELETED) {
+                hashTable[newIndex] = key;
+                printf("%d inserted at index %d\n", key, newIndex);
+                break;
+            }
+
+            if(i == SIZE - 1) {
+                printf("Hash table is full. Cannot insert %d\n", key);
+            }
         }
-
-        i++;
     }
-
-    printf("Hash Table is Full\n");
 }
 
-void search(int key) {
-    int index = hashFunction(key);
-    int i = 0;
+void search() {
+    int key, index, newIndex;
 
-    while(i < SIZE) {
-        int newIndex = (index + i * i) % SIZE;
+    printf("Enter value to search: ");
+    scanf("%d", &key);
+
+    index = hashFunction(key);
+
+    for(int i = 0; i < SIZE; i++) {
+        newIndex = (index + i * i) % SIZE;
 
         if(hashTable[newIndex] == key) {
-            printf("Key found at index %d\n", newIndex);
+            printf("Value found at index %d\n", newIndex);
             return;
         }
 
-        if(hashTable[newIndex] == -1)
+        if(hashTable[newIndex] == EMPTY) {
             break;
-
-        i++;
+        }
     }
 
-    printf("Key not found\n");
+    printf("Value not found.\n");
+}
+
+void deleteKey() {
+    int key, index, newIndex;
+
+    printf("Enter value to delete: ");
+    scanf("%d", &key);
+
+    index = hashFunction(key);
+
+    for(int i = 0; i < SIZE; i++) {
+        newIndex = (index + i * i) % SIZE;
+
+        if(hashTable[newIndex] == key) {
+            hashTable[newIndex] = DELETED;
+            printf("Value deleted successfully.\n");
+            return;
+        }
+
+        if(hashTable[newIndex] == EMPTY) {
+            break;
+        }
+    }
+
+    printf("Value not found.\n");
 }
 
 void display() {
     printf("\nHash Table:\n");
 
     for(int i = 0; i < SIZE; i++) {
-        printf("%d --> ", i);
-
-        if(hashTable[i] == -1)
-            printf("EMPTY\n");
+        if(hashTable[i] == EMPTY)
+            printf("Index %d : EMPTY\n", i);
+        else if(hashTable[i] == DELETED)
+            printf("Index %d : DELETED\n", i);
         else
-            printf("%d\n", hashTable[i]);
+            printf("Index %d : %d\n", i, hashTable[i]);
     }
 }
 
 int main() {
-    int choice, key;
+    int choice;
 
-    init();
+    initialize();
 
     while(1) {
-        printf("\n--- Quadratic Probing ---\n");
+        printf("\n--- Quadratic Probing Menu ---\n");
         printf("1. Insert\n");
-        printf("2. Search\n");
-        printf("3. Display\n");
-        printf("4. Exit\n");
-        printf("Enter choice: ");
+        printf("2. Display\n");
+        printf("3. Search\n");
+        printf("4. Delete\n");
+        printf("5. Exit\n");
+
+        printf("Enter your choice: ");
         scanf("%d", &choice);
 
         switch(choice) {
             case 1:
-                printf("Enter key: ");
-                scanf("%d", &key);
-                insert(key);
+                insert();
                 break;
 
             case 2:
-                printf("Enter key to search: ");
-                scanf("%d", &key);
-                search(key);
-                break;
-
-            case 3:
                 display();
                 break;
 
+            case 3:
+                search();
+                break;
+
             case 4:
-                return 0;
+                deleteKey();
+                break;
+
+            case 5:
+                exit(0);
 
             default:
-                printf("Invalid Choice\n");
+                printf("Invalid choice.\n");
         }
     }
+
+    return 0;
 }
