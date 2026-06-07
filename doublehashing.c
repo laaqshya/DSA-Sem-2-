@@ -1,10 +1,16 @@
 #include <stdio.h>
-#define SIZE 10
+#include <stdlib.h>
 
-int hashTable[SIZE];
+#define MAX_LOAD_FACTOR 0.7
 
-void init() {
-    for(int i = 0; i < SIZE; i++)
+int *hashTable;
+int SIZE = 10;
+int count = 0;
+
+void initialize() {
+    hashTable = (int *)malloc(SIZE * sizeof(int));
+
+    for (int i = 0; i < SIZE; i++)
         hashTable[i] = -1;
 }
 
@@ -16,97 +22,135 @@ int hash2(int key) {
     return 7 - (key % 7);
 }
 
-void insert(int key) {
-    int index = hash1(key);
-    int step = hash2(key);
-    int i = 0;
-
-    while(i < SIZE) {
-        int newIndex = (index + i * step) % SIZE;
-
-        if(hashTable[newIndex] == -1) {
-            hashTable[newIndex] = key;
-            printf("Inserted %d at index %d\n", key, newIndex);
-            return;
-        }
-
-        i++;
-    }
-
-    printf("Hash Table is Full\n");
+float loadFactor() {
+    return (float)count / SIZE;
 }
 
-void search(int key) {
+void insertValue(int key) {
     int index = hash1(key);
     int step = hash2(key);
-    int i = 0;
+    int newIndex;
 
-    while(i < SIZE) {
-        int newIndex = (index + i * step) % SIZE;
+    for (int i = 0; i < SIZE; i++) {
+        newIndex = (index + i * step) % SIZE;
 
-        if(hashTable[newIndex] == key) {
-            printf("Key found at index %d\n", newIndex);
+        if (hashTable[newIndex] == -1) {
+            hashTable[newIndex] = key;
+            count++;
+            return;
+        }
+    }
+
+    printf("Could not insert %d\n", key);
+}
+
+void rehash() {
+    int oldSize = SIZE;
+    int *oldTable = hashTable;
+
+    SIZE = SIZE * 2;
+
+    hashTable = (int *)malloc(SIZE * sizeof(int));
+
+    for (int i = 0; i < SIZE; i++)
+        hashTable[i] = -1;
+
+    count = 0;
+
+    for (int i = 0; i < oldSize; i++) {
+        if (oldTable[i] != -1)
+            insertValue(oldTable[i]);
+    }
+
+    free(oldTable);
+
+    printf("Table size doubled to %d and rehashed.\n", SIZE);
+}
+
+void insert() {
+    int n, key;
+
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++) {
+        printf("Enter value %d: ", i + 1);
+        scanf("%d", &key);
+
+        if ((float)(count + 1) / SIZE > MAX_LOAD_FACTOR) {
+            rehash();
+        }
+
+        insertValue(key);
+
+        printf("Current load factor = %.2f\n", loadFactor());
+    }
+}
+
+void search() {
+    int key, index, step, newIndex;
+
+    printf("Enter value to search: ");
+    scanf("%d", &key);
+
+    index = hash1(key);
+    step = hash2(key);
+
+    for (int i = 0; i < SIZE; i++) {
+        newIndex = (index + i * step) % SIZE;
+
+        if (hashTable[newIndex] == key) {
+            printf("Value found at index %d\n", newIndex);
             return;
         }
 
-        if(hashTable[newIndex] == -1)
+        if (hashTable[newIndex] == -1)
             break;
-
-        i++;
     }
 
-    printf("Key not found\n");
+    printf("Value not found.\n");
 }
 
 void display() {
     printf("\nHash Table:\n");
 
-    for(int i = 0; i < SIZE; i++) {
-        printf("%d --> ", i);
-
-        if(hashTable[i] == -1)
-            printf("EMPTY\n");
+    for (int i = 0; i < SIZE; i++) {
+        if (hashTable[i] == -1)
+            printf("Index %d : EMPTY\n", i);
         else
-            printf("%d\n", hashTable[i]);
+            printf("Index %d : %d\n", i, hashTable[i]);
     }
+
+    printf("Table size = %d\n", SIZE);
+    printf("Number of elements = %d\n", count);
+    printf("Load factor = %.2f\n", loadFactor());
 }
 
 int main() {
-    int choice, key;
+    int choice;
 
-    init();
+    initialize();
 
-    while(1) {
-        printf("\n--- Double Hashing ---\n");
+    while (1) {
+        printf("\n--- Double Hashing Menu ---\n");
         printf("1. Insert\n");
         printf("2. Search\n");
         printf("3. Display\n");
-        printf("4. Exit\n");
+        printf("4. Load Factor\n");
+        printf("5. Exit\n");
+
         printf("Enter choice: ");
         scanf("%d", &choice);
 
-        switch(choice) {
-            case 1:
-                printf("Enter key: ");
-                scanf("%d", &key);
-                insert(key);
-                break;
-
-            case 2:
-                printf("Enter key to search: ");
-                scanf("%d", &key);
-                search(key);
-                break;
-
-            case 3:
-                display();
-                break;
-
-            case 4:
-                return 0;
-
-            default:
-                printf("Invalid Choice\n");
+        switch (choice) {
+            case 1: insert(); break;
+            case 2: search(); break;
+            case 3: display(); break;
+            case 4: printf("Current load factor = %.2f\n", loadFactor()); break;
+            case 5: free(hashTable); exit(0);
+            default: printf("Invalid choice\n");
         }
     }
+
+    return 0;
 }
