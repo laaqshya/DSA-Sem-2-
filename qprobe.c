@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX_LOAD_FACTOR 0.7
+#define MAX_LOAD_FACTOR 0.5
 
 int *hashTable;
 int SIZE = 10;
