@@ -38,7 +38,7 @@ void rehash() {
     int oldSize = SIZE;
     int *oldTable = hashTable;
 
-    SIZE = SIZE * 2;
+    SIZE = SIZE * 2;   // doubling hash table size
 
     hashTable = (int *)malloc(SIZE * sizeof(int));
 
@@ -119,34 +119,6 @@ void search() {
     printf("Value not found.\n");
 }
 
-void deleteKey() {
-    int key, index, startIndex;
-
-    printf("Enter value to delete: ");
-    scanf("%d", &key);
-
-    index = hashFunction(key);
-    startIndex = index;
-
-    while (hashTable[index] != -1) {
-        if (hashTable[index] == key) {
-            hashTable[index] = -1;
-            count--;
-
-            printf("Value deleted successfully.\n");
-            printf("Current load factor = %.2f\n", loadFactor());
-            return;
-        }
-
-        index = (index + 1) % SIZE;
-
-        if (index == startIndex)
-            break;
-    }
-
-    printf("Value not found.\n");
-}
-
 int main() {
     int choice;
 
@@ -157,9 +129,8 @@ int main() {
         printf("1. Insert\n");
         printf("2. Display\n");
         printf("3. Search\n");
-        printf("4. Delete\n");
-        printf("5. Load Factor\n");
-        printf("6. Exit\n");
+        printf("4. Load Factor\n");
+        printf("5. Exit\n");
 
         printf("Enter your choice: ");
         scanf("%d", &choice);
@@ -178,14 +149,10 @@ int main() {
                 break;
 
             case 4:
-                deleteKey();
-                break;
-
-            case 5:
                 printf("Current load factor = %.2f\n", loadFactor());
                 break;
 
-            case 6:
+            case 5:
                 free(hashTable);
                 exit(0);
 
