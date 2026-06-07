@@ -11,13 +11,18 @@ struct node
 // create list
 struct node *create(struct node *f)
 {
-    char c = 'y';
+    int n, i;
 
-    while (c == 'y' || c == 'Y')
+    printf("Enter number of nodes: ");
+    scanf("%d", &n);
+
+    for (i = 0; i < n; i++)
     {
         nn = (struct node *)malloc(sizeof(struct node));
+
         printf("Enter data: ");
         scanf("%d", &nn->data);
+
         nn->link = NULL;
 
         if (f == NULL)
@@ -30,9 +35,6 @@ struct node *create(struct node *f)
             temp->link = nn;
             temp = nn;
         }
-
-        printf("Continue to create (y/n): ");
-        scanf(" %c", &c);   // ? safe input
     }
 
     return f;
