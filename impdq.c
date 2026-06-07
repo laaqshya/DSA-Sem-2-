@@ -1,130 +1,154 @@
 #include <stdio.h>
+
 #define MAX 5
 
-int deque[MAX];
+int dq[MAX];
 int front = -1, rear = -1;
 
-// Check if full
-int isFull() {
-    return (front == 0 && rear == MAX - 1);
-}
-
-// Check if empty
-int isEmpty() {
-    return (front == -1);
-}
-
-// Insert at front
-void insertFront(int x) {
-    if (isFull()) {
-        printf("Overflow\n");
+void insertFront(int x)
+{
+    if (front == 0)
+    {
+        printf("Insertion at front not possible\n");
         return;
     }
 
-    if (isEmpty()) {
+    if (front == -1)
+    {
         front = rear = 0;
-    } else if (front == 0) {
-        printf("No space at front\n");
-        return;
-    } else {
+    }
+    else
+    {
         front--;
     }
 
-    deque[front] = x;
+    dq[front] = x;
 }
 
-// Insert at rear
-void insertRear(int x) {
-    if (isFull()) {
-        printf("Overflow\n");
+void insertRear(int x)
+{
+    if (rear == MAX - 1)
+    {
+        printf("Insertion at rear not possible\n");
         return;
     }
 
-    if (isEmpty()) {
+    if (front == -1)
+    {
         front = rear = 0;
-    } else if (rear == MAX - 1) {
-        printf("No space at rear\n");
-        return;
-    } else {
+    }
+    else
+    {
         rear++;
     }
 
-    deque[rear] = x;
+    dq[rear] = x;
 }
 
-// Delete from front
-void deleteFront() {
-    if (isEmpty()) {
-        printf("Underflow\n");
-        return;
-    }
+int deleteFront()
+{
+    int x;
 
-    printf("Deleted: %d\n", deque[front]);
+    if (front == -1)
+        return -1;
 
-    if (front == rear) {
+    x = dq[front];
+
+    if (front == rear)
         front = rear = -1;
-    } else {
+    else
         front++;
-    }
+
+    return x;
 }
 
-// Delete from rear
-void deleteRear() {
-    if (isEmpty()) {
-        printf("Underflow\n");
-        return;
-    }
+int deleteRear()
+{
+    int x;
 
-    printf("Deleted: %d\n", deque[rear]);
+    if (front == -1)
+        return -1;
 
-    if (front == rear) {
+    x = dq[rear];
+
+    if (front == rear)
         front = rear = -1;
-    } else {
+    else
         rear--;
-    }
+
+    return x;
 }
 
-// Display
-void display() {
-    if (isEmpty()) {
+int isEmpty()
+{
+    return (front == -1);
+}
+
+int isFull()
+{
+    return (front == 0 && rear == MAX - 1);
+}
+
+void display()
+{
+    if (isEmpty())
+    {
         printf("Deque is empty\n");
         return;
     }
 
     printf("Deque elements: ");
-    for (int i = front; i <= rear; i++) {
-        printf("%d ", deque[i]);
-    }
+
+    for (int i = front; i <= rear; i++)
+        printf("%d ", dq[i]);
+
     printf("\n");
 }
 
-int main() {
-    int choice, x;
+int main()
+{
+    int ch, x;
 
-    while (1) {
-        printf("\n1.Insert Front\n2.Insert Rear\n3.Delete Front\n4.Delete Rear\n5.Display\n6.Exit\n");
-        printf("Enter choice: ");
-        scanf("%d", &choice);
+    while (1)
+    {
+        printf("\n1.Insert Front");
+        printf("\n2.Insert Rear");
+        printf("\n3.Delete Front");
+        printf("\n4.Delete Rear");
+        printf("\n5.Display");
+        printf("\n6.Exit");
+        printf("\nEnter choice: ");
 
-        switch (choice) {
+        scanf("%d", &ch);
+
+        switch (ch)
+        {
             case 1:
-                printf("Enter value: ");
+                printf("Enter element: ");
                 scanf("%d", &x);
                 insertFront(x);
                 break;
 
             case 2:
-                printf("Enter value: ");
+                printf("Enter element: ");
                 scanf("%d", &x);
                 insertRear(x);
                 break;
 
             case 3:
-                deleteFront();
+                x = deleteFront();
+                if (x == -1)
+                    printf("Deque is empty\n");
+                else
+                    printf("Deleted: %d\n", x);
                 break;
 
             case 4:
-                deleteRear();
+                x = deleteRear();
+                if (x == -1)
+                    printf("Deque is empty\n");
+                else
+                    printf("Deleted: %d\n", x);
                 break;
 
             case 5:
@@ -138,6 +162,4 @@ int main() {
                 printf("Invalid choice\n");
         }
     }
-
-    return 0;
 }
